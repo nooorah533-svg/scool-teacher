@@ -1,22 +1,66 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة  تمكين الاستراتيجيات التعليميه النوعيه بمدرستي</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }
-    </style>
-</head>
-<body>
-    <h1 style="text-align: center; margin-top: 50px; font-size: 24px; color: blue;">
-        الموقع يعمل بنجاح! جاري تحميل المنصة...
-    </h1>
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom/client';
 
-    <div id="root"></div>
+const Platform = () => {
+  const [teacher, setTeacher] = useState("نورة المالكي");
+  const [visits, setVisits] = useState({ s1: 0, s2: 0 });
+  const [files, setFiles] = useState([]);
 
-    <script type="module" src="./assets/index-CrQxTVkF.js"></script>
-</body>
-</html>
+  const handleUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFiles([...files, { name: file.name, owner: teacher }]);
+      alert(`تم رفع ملف ${file.name} بنجاح للمعلمة ${teacher}`);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6 text-right" dir="rtl">
+      {/* رأس الصفحة بالأسماء الجديدة */}
+      <div className="bg-white shadow rounded-lg p-6 mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-blue-700">مجمع السحن</h1>
+          <p className="text-sm text-gray-500">منصة تمكين الاستراتيجيات التعليمية</p>
+        </div>
+        <select onChange={(e) => setTeacher(e.target.value)} className="border p-2 rounded-lg">
+          <option value="نورة المالكي">نورة المالكي</option>
+          <option value="مشاعل الشريف">مشاعل الشريف</option>
+        </select>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* قسم رفع الملفات */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="font-bold mb-4">رفع مورد تعليمي جديد (باسم: {teacher})</h2>
+          <input type="file" onChange={handleUpload} className="w-full border p-4 border-dashed rounded-lg" />
+        </div>
+
+        {/* قسم عداد الزيارات */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="font-bold mb-4">إحصائيات الزيارات</h2>
+          <div className="flex justify-between items-center mb-2 p-2 bg-blue-50 rounded">
+            <span>استراتيجية التعلم النشط</span>
+            <button onClick={() => setVisits({...visits, s1: visits.s1 + 1})} className="bg-blue-600 text-white px-3 py-1 rounded">
+              الزيارات: {visits.s1}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* عرض الملفات الخاصة بكل معلمة */}
+      <div className="mt-8">
+        <h2 className="font-bold text-xl mb-4">ملفات المعلمة: {teacher}</h2>
+        <div className="grid grid-cols-1 gap-2">
+          {files.filter(f => f.owner === teacher).map((f, i) => (
+            <div key={i} className="p-3 bg-white shadow-sm border-r-4 border-blue-500 rounded">
+              📄 {f.name}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<Platform />);
