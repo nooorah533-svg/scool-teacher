@@ -3,69 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجمع السحن - منصة المعلمات</title>
+    <title>منصة مجمع السحن الماك التعليمية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }</style>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+    </style>
 </head>
 <body>
     <div id="root"></div>
+
     <script type="text/babel">
         const { useState } = React;
-        function App() {
-            const [teacher, setTeacher] = useState("نورة المالكي");
-            const [files, setFiles] = useState([]);
-            const [visits, setVisits] = useState(0);
 
-            const handleUpload = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    setFiles([...files, { name: file.name, owner: teacher, id: Date.now() }]);
-                    alert("تم الرفع بنجاح!");
-                }
-            };
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home');
+            const [teacherName, setTeacherName] = useState("نوره المالكي");
+
+            // قائمة المواد الشاملة (المنهج السعودي)
+            const subjects = [
+                "لغتي", "الرياضيات", "العلوم", "الدراسات الإسلامية", 
+                "الفيزياء", "الكيمياء", "الأحياء", "القدرات", "التحصيلي"
+            ];
 
             return (
-                <div className="max-w-3xl mx-auto p-6">
-                    <div className="bg-white p-8 rounded-3xl shadow-lg border-b-8 border-blue-600">
-                        <h1 className="text-3xl font-bold text-center text-blue-900 mb-2">مجمع السحن</h1>
-                        <p className="text-center text-gray-500 mb-6">منصة الموارد التعليمية الرقمية</p>
-                        
-                        <div className="flex justify-center gap-4 mb-8">
-                            <button onClick={() => setTeacher("نورة المالكي")} className={`px-4 py-2 rounded-full ${teacher === "نورة المالكي" ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>نورة المالكي</button>
-                            <button onClick={() => setTeacher("مشاعل الشريف")} className={`px-4 py-2 rounded-full ${teacher === "مشاعل الشريف" ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>مشاعل الشريف</button>
+                <div className="min-h-screen">
+                    {/* Header الهوية البصرية */}
+                    <header className="gradient-bg text-white p-6 shadow-xl">
+                        <div className="container mx-auto flex justify-between items-center">
+                            <div>
+                                <h1 className="text-2xl font-bold">منصة مجمع السحن الماك التعليمية</h1>
+                                <p className="text-sm opacity-90 font-bold mt-1">إشراف وتطوير: نوره المالكي – مشاعل الشريف</p>
+                            </div>
+                            <nav className="hidden md:flex gap-6">
+                                <button onClick={() => setActiveTab('home')} className="hover:text-blue-200">الرئيسية</button>
+                                <button onClick={() => setActiveTab('upload')} className="hover:text-blue-200">رفع مورد</button>
+                                <button onClick={() => setActiveTab('stats')} className="hover:text-blue-200">الإحصائيات</button>
+                            </nav>
+                        </div>
+                    </header>
+
+                    <main className="container mx-auto p-6">
+                        {/* لوحة التحكم السريعة */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                            <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-blue-600">
+                                <p className="text-gray-500 text-sm">إجمالي الموارد</p>
+                                <p className="text-2xl font-bold text-blue-900">1,250</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-green-600">
+                                <p className="text-gray-500 text-sm">عدد المستفيدين</p>
+                                <p className="text-2xl font-bold text-green-900">5,400</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-purple-600">
+                                <p className="text-gray-500 text-sm">مرات التحميل</p>
+                                <p className="text-2xl font-bold text-purple-900">12,890</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-xl shadow-sm border-r-4 border-orange-600">
+                                <p className="text-gray-500 text-sm">تقييم المنصة</p>
+                                <p className="text-2xl font-bold text-orange-900">4.9/5</p>
+                            </div>
                         </div>
 
-                        <div className="border-4 border-dashed border-blue-100 p-10 rounded-2xl text-center mb-8">
-                            <input type="file" id="fileIn" hidden onChange={handleUpload} />
-                            <button onClick={() => document.getElementById('fileIn').click()} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition">
-                                📤 اضغطي لرفع مورد تعليمي جديد
-                            </button>
-                            <p className="mt-2 text-sm text-gray-400">بواسطة المعلمة: {teacher}</p>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h2 className="font-bold text-lg text-blue-800 border-r-4 border-blue-600 pr-3">مواردي المرفوعة:</h2>
-                            {files.filter(f => f.owner === teacher).map(f => (
-                                <div key={f.id} className="p-4 bg-blue-50 rounded-xl flex justify-between items-center">
-                                    <span className="font-medium">{f.name}</span>
-                                    <span className="text-xs bg-white px-2 py-1 rounded shadow-sm">ملف مرفوع</span>
+                        {/* قسم رفع الملفات */}
+                        {activeTab === 'upload' && (
+                            <div className="bg-white p-8 rounded-2xl shadow-lg max-w-2xl mx-auto">
+                                <h2 className="text-xl font-bold mb-6 text-blue-900 border-b pb-2">إضافة مورد تعليمي جديد</h2>
+                                <div className="space-y-4 text-right">
+                                    <div>
+                                        <label className="block text-sm font-bold mb-1">عنوان المورد</label>
+                                        <input type="text" className="w-full p-2 border rounded-lg bg-gray-50" placeholder="مثلاً: استراتيجية الكرسي الساخن" />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-bold mb-1">المادة</label>
+                                            <select className="w-full p-2 border rounded-lg bg-gray-50">
+                                                {subjects.map(s => <option key={s}>{s}</option>)}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold mb-1">المرحلة</label>
+                                            <select className="w-full p-2 border rounded-lg bg-gray-50">
+                                                <option>رياض الأطفال</option>
+                                                <option>الابتدائية</option>
+                                                <option>المتوسطة</option>
+                                                <option>الثانوية</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="border-2 border-dashed border-blue-200 p-10 rounded-xl text-center hover:bg-blue-50 cursor-pointer">
+                                        <p className="text-blue-600 font-bold">اسحبي الملف هنا أو اضغطي للرفع</p>
+                                        <p className="text-xs text-gray-400 mt-2">يدعم PDF, PPT, DOC حتى 50 ميجابايت</p>
+                                    </div>
+                                    <button className="w-full gradient-bg text-white py-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition">
+                                        نشر المورد التعليمي
+                                    </button>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        )}
 
-                        <div className="mt-10 p-6 bg-gray-900 rounded-2xl text-white text-center">
-                            <p className="text-sm opacity-70">إجمالي زيارات الاستراتيجيات</p>
-                            <p className="text-4xl font-bold my-2">{visits}</p>
-                            <button onClick={() => setVisits(visits + 1)} className="bg-white text-black px-6 py-2 rounded-full font-bold text-sm">تسجيل زيارة</button>
-                        </div>
-                    </div>
+                        {/* الصفحة الرئيسية - عرض الموارد */}
+                        {activeTab === 'home' && (
+                            <div>
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-xl font-bold text-gray-800 underline decoration-blue-500 underline-offset-8">أحدث الموارد المرفوعة</h2>
+                                    <div className="flex gap-2">
+                                        <input type="text" placeholder="بحث ذكي..." className="p-2 border rounded-lg text-sm w-64" />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition">
+                                            <div className="h-32 bg-gray-200 flex items-center justify-center text-gray-400 text-4xl">📄</div>
+                                            <div className="p-4">
+                                                <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">كيمياء - ثانوي</span>
+                                                <h3 className="font-bold mt-2 text-gray-800">تجربة التفاعلات الكيميائية</h3>
+                                                <p className="text-xs text-gray-500 mt-1">المعلمة: مشاعل الشريف</p>
+                                                <div className="mt-4 flex justify-between items-center border-t pt-3">
+                                                    <span className="text-xs text-gray-400">👁 450 زيارة</span>
+                                                    <button className="text-sm font-bold text-blue-700">تحميل المورد</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="mt-20 bg-white border-t p-8 text-center text-gray-500">
+                        <p className="text-sm">جميع الحقوق محفوظة لمنصة مجمع السحن الماك التعليمية © 2026</p>
+                        <p className="text-xs mt-2 italic text-blue-400 font-bold">تطوير بإشراف نوره المالكي & مشاعل الشريف</p>
+                    </footer>
                 </div>
             );
-        }
+        };
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
