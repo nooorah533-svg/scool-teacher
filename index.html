@@ -3,115 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجمع السحن - منصة المعلمات</title>
+    <title>منصة مجمع السحن التعليمية - منطقة مكة المكرمة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #f0f4f8; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f4f7f9; }
+        .platform-header { background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 100%); }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState } = React;
 
-        function App() {
-            const [teacher, setTeacher] = useState("نورة المالكي");
-            const [files, setFiles] = useState([]);
-            const [visits, setVisits] = useState({ strategy1: 0, strategy2: 0 });
-
-            const handleUpload = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const newFile = {
-                        name: file.name,
-                        owner: teacher,
-                        date: new Date().toLocaleDateString(),
-                        id: Math.random()
-                    };
-                    setFiles([...files, newFile]);
-                    alert(`تم رفع ملف ${file.name} بنجاح للمعلمة ${teacher}`);
-                }
-            };
-
-            const addVisit = (strategy) => {
-                setVisits(prev => ({ ...prev, [strategy]: prev[strategy] + 1 }));
-            };
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('browse');
+            const [selectedTeacher, setSelectedTeacher] = useState("نورة المالكي");
+            const [resourceType, setResourceType] = useState("استراتيجية تدريسية");
+            
+            // بيانات تجريبية توضح المطلوب
+            const [resources, setResources] = useState([
+                { id: 1, fileName: "التعلم باللعب.pdf", teacher: "نورة المالكي", type: "استراتيجية تدريسية", subject: "لغتي", visits: 120 },
+                { id: 2, fileName: "نشاط الكيمياء العضوية.docx", teacher: "مشاعل الشريف", type: "أوراق عمل", subject: "كيمياء", visits: 85 }
+            ]);
 
             return (
-                <div className="max-w-4xl mx-auto p-6">
-                    <header className="text-center mb-10 bg-white p-6 rounded-2xl shadow-sm">
-                        <h1 className="text-3xl font-bold text-blue-900">مجمع السحن</h1>
-                        <p className="text-gray-600">منصة تمكين الاستراتيجيات التعليمية النوعية</p>
-                        
-                        <div className="mt-6 flex justify-center items-center gap-4">
-                            <label className="font-bold">اختر المعلمة:</label>
-                            <select 
-                                className="border p-2 rounded-lg bg-blue-50"
-                                onChange={(e) => setTeacher(e.target.value)}
-                            >
-                                <option value="نورة المالكي">نورة المالكي</option>
-                                <option value="مشاعل الشريف">مشاعل الشريف</option>
-                            </select>
+                <div className="min-h-screen">
+                    {/* الهوية الرسمية للمنصة */}
+                    <header className="platform-header text-white p-6 shadow-2xl">
+                        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+                            <div className="text-center md:text-right">
+                                <h1 className="text-3xl font-bold">منصة مجمع السحن الماك التعليمية</h1>
+                                <p className="text-blue-100 mt-1">المبادرة النوعية على مستوى المنطقة التعليمية</p>
+                                <p className="text-sm font-bold text-yellow-400 mt-2">إشراف: نورة المالكي & مشاعل الشريف</p>
+                            </div>
+                            <div className="flex gap-4 mt-4 md:mt-0">
+                                <button onClick={() => setActiveTab('browse')} className={`px-4 py-2 rounded-lg ${activeTab === 'browse' ? 'bg-white text-blue-700' : 'bg-blue-600'}`}>تصفح الموارد</button>
+                                <button onClick={() => setActiveTab('upload')} className={`px-4 py-2 rounded-lg ${activeTab === 'upload' ? 'bg-white text-blue-700' : 'bg-blue-600'}`}>رفع ملف جديد</button>
+                            </div>
                         </div>
                     </header>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                        {/* قسم الرفع */}
-                        <div className="bg-white p-6 rounded-2xl shadow-md border-t-4 border-blue-500">
-                            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                📤 إضافة مورد تعليمي جديد
-                            </h2>
-                            <div 
-                                className="border-2 border-dashed border-gray-300 p-10 text-center rounded-xl cursor-pointer hover:bg-gray-50"
-                                onClick={() => document.getElementById('uploader').click()}
-                            >
-                                <input id="uploader" type="file" className="hidden" onChange={handleUpload} />
-                                <p className="text-gray-500">اضغطي هنا لرفع الملف (PDF, PPT)</p>
+                    <main className="container mx-auto p-4 md:p-8">
+                        {/* قسم رفع الملفات */}
+                        {activeTab === 'upload' && (
+                            <div className="bg-white p-6 rounded-2xl shadow-lg max-w-3xl mx-auto border-t-8 border-blue-600">
+                                <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">إضافة مورد تعليمي جديد</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <label className="block font-bold mb-2">اسم المعلمة</label>
+                                        <select className="w-full p-3 border rounded-xl" onChange={(e) => setSelectedTeacher(e.target.value)}>
+                                            <option>نورة المالكي</option>
+                                            <option>مشاعل الشريف</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block font-bold mb-2">نوع المورد</label>
+                                        <select className="w-full p-3 border rounded-xl" onChange={(e) => setResourceType(e.target.value)}>
+                                            <option>استراتيجية تدريسية</option>
+                                            <option>أوراق عمل</option>
+                                            <option>عرض تقديمي</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="border-4 border-dashed border-gray-200 p-12 rounded-3xl text-center hover:border-blue-400 transition-all cursor-pointer">
+                                    <p className="text-xl text-gray-400">اسحبي الملف هنا (PDF, PPT, DOC)</p>
+                                    <p className="text-sm text-blue-500 mt-2">المعلمة الحالية: {selectedTeacher}</p>
+                                </div>
+                                <button className="w-full mt-6 bg-blue-700 text-white py-4 rounded-2xl font-bold text-xl shadow-lg">نشر المورد على مستوى المنطقة</button>
                             </div>
-                        </div>
+                        )}
 
-                        {/* قسم الملفات الشخصية */}
-                        <div className="bg-white p-6 rounded-2xl shadow-md border-t-4 border-green-500">
-                            <h2 className="text-xl font-bold mb-4">📚 مواردي المرفوعة ({teacher})</h2>
-                            <div className="space-y-3">
-                                {files.filter(f => f.owner === teacher).length === 0 ? (
-                                    <p className="text-gray-400 text-sm italic">لا توجد ملفات مرفوعة بعد...</p>
-                                ) : (
-                                    files.filter(f => f.owner === teacher).map(f => (
-                                        <div key={f.id} className="flex justify-between p-3 bg-green-50 rounded-lg border border-green-100">
-                                            <span className="font-medium text-green-800">{f.name}</span>
-                                            <span className="text-xs text-gray-500">{f.date}</span>
-                                        </div>
-                                    ))
-                                )}
+                        {/* جدول الموارد المرفوعة */}
+                        {activeTab === 'browse' && (
+                            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                                <div className="p-6 bg-gray-50 border-b flex justify-between items-center">
+                                    <h2 className="text-xl font-bold text-blue-900 font-bold">الموارد التعليمية المنشورة</h2>
+                                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">نظام نشط ✅</span>
+                                </div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-right border-collapse">
+                                        <thead>
+                                            <tr className="bg-blue-50 text-blue-900">
+                                                <th className="p-4 border-b">اسم المعلمة</th>
+                                                <th className="p-4 border-b">اسم الملف</th>
+                                                <th className="p-4 border-b">نوع المورد</th>
+                                                <th className="p-4 border-b">المادة</th>
+                                                <th className="p-4 border-b">عدد الزيارات</th>
+                                                <th className="p-4 border-b">الإجراء</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {resources.map(res => (
+                                                <tr key={res.id} className="hover:bg-gray-50 transition">
+                                                    <td className="p-4 border-b font-bold text-gray-700">{res.teacher}</td>
+                                                    <td className="p-4 border-b text-blue-600">{res.fileName}</td>
+                                                    <td className="p-4 border-b">
+                                                        <span className={`px-3 py-1 rounded-full text-xs ${res.type === 'أوراق عمل' ? 'bg-orange-100 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
+                                                            {res.type}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4 border-b">{res.subject}</td>
+                                                    <td className="p-4 border-b font-bold text-red-500">{res.visits} زيارة</td>
+                                                    <td className="p-4 border-b">
+                                                        <button className="bg-blue-100 text-blue-700 px-4 py-1 rounded-lg text-sm hover:bg-blue-700 hover:text-white transition">عرض</button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        )}
+                    </main>
 
-                    {/* قسم الاستراتيجيات والزيارات */}
-                    <div className="mt-10 bg-blue-900 text-white p-6 rounded-2xl shadow-xl">
-                        <h2 className="text-xl font-bold mb-6 text-center text-blue-200">📊 إحصائيات استراتيجيات المعلمات</h2>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-blue-800 p-4 rounded-xl text-center">
-                                <p className="text-sm opacity-80">استراتيجية التعلم النشط</p>
-                                <p className="text-3xl font-bold my-2">{visits.strategy1}</p>
-                                <button onClick={() => addVisit('strategy1')} className="bg-blue-600 hover:bg-blue-500 px-4 py-1 rounded-full text-sm transition">تسجيل زيارة</button>
-                            </div>
-                            <div className="bg-blue-800 p-4 rounded-xl text-center">
-                                <p className="text-sm opacity-80">استراتيجية الخرائط الذهنية</p>
-                                <p className="text-3xl font-bold my-2">{visits.strategy2}</p>
-                                <button onClick={() => addVisit('strategy2')} className="bg-blue-600 hover:bg-blue-500 px-4 py-1 rounded-full text-sm transition">تسجيل زيارة</button>
-                            </div>
-                        </div>
-                    </div>
+                    <footer className="mt-12 p-8 bg-gray-800 text-white text-center">
+                        <p className="font-bold text-lg mb-2 text-yellow-400">منصة مجمع السحن الماك التعليمية</p>
+                        <p className="opacity-70">تم التطوير لخدمة معلمات المنطقة تحت إشراف نورة المالكي ومشاعل الشريف</p>
+                    </footer>
                 </div>
             );
-        }
+        };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
