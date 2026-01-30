@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مجمع السحن التعليمية - منطقة مكة المكرمة</title>
+    <title>منصة مجمع السحن التعليمية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #f4f7f9; }
-        .platform-header { background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 100%); }
-    </style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f0f9ff; }
+        .step-active { border: 3px solid #2563eb; background-color: #eff6ff; }
+        .icon-btn { transition: all 0.3s; cursor: pointer; }
+        .icon-btn:hover { transform: scale(1.1); }
+    </script>
 </head>
 <body>
     <div id="root"></div>
@@ -21,109 +23,112 @@
         const { useState } = React;
 
         const App = () => {
-            const [activeTab, setActiveTab] = useState('browse');
-            const [selectedTeacher, setSelectedTeacher] = useState("نورة المالكي");
-            const [resourceType, setResourceType] = useState("استراتيجية تدريسية");
-            
-            // بيانات تجريبية توضح المطلوب
-            const [resources, setResources] = useState([
-                { id: 1, fileName: "التعلم باللعب.pdf", teacher: "نورة المالكي", type: "استراتيجية تدريسية", subject: "لغتي", visits: 120 },
-                { id: 2, fileName: "نشاط الكيمياء العضوية.docx", teacher: "مشاعل الشريف", type: "أوراق عمل", subject: "كيمياء", visits: 85 }
-            ]);
+            const [step, setStep] = useState(1); // نظام الخطوات
+            const [formData, setFormData] = useState({
+                teacherName: "",
+                strategy: "",
+                workSheet: "",
+                fileName: ""
+            });
+
+            const nextStep = () => setStep(step + 1);
+
+            const handleSave = () => {
+                alert(`تم حفظ مورد المعلمة: ${formData.teacherName} بنجاح في قاعدة بيانات المنطقة!`);
+                setStep(1); // العودة للبداية بعد الحفظ
+                setFormData({ teacherName: "", strategy: "", workSheet: "", fileName: "" });
+            };
 
             return (
-                <div className="min-h-screen">
-                    {/* الهوية الرسمية للمنصة */}
-                    <header className="platform-header text-white p-6 shadow-2xl">
-                        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-                            <div className="text-center md:text-right">
-                                <h1 className="text-3xl font-bold">منصة مجمع السحن الماك التعليمية</h1>
-                                <p className="text-blue-100 mt-1">المبادرة النوعية على مستوى المنطقة التعليمية</p>
-                                <p className="text-sm font-bold text-yellow-400 mt-2">إشراف: نورة المالكي & مشاعل الشريف</p>
-                            </div>
-                            <div className="flex gap-4 mt-4 md:mt-0">
-                                <button onClick={() => setActiveTab('browse')} className={`px-4 py-2 rounded-lg ${activeTab === 'browse' ? 'bg-white text-blue-700' : 'bg-blue-600'}`}>تصفح الموارد</button>
-                                <button onClick={() => setActiveTab('upload')} className={`px-4 py-2 rounded-lg ${activeTab === 'upload' ? 'bg-white text-blue-700' : 'bg-blue-600'}`}>رفع ملف جديد</button>
-                            </div>
-                        </div>
+                <div className="min-h-screen flex flex-col items-center p-6">
+                    <header className="w-full max-w-2xl text-center mb-10 bg-blue-900 text-white p-6 rounded-3xl shadow-lg">
+                        <h1 className="text-2xl font-bold">منصة مجمع السحن الماك التعليمية</h1>
+                        <p className="text-sm opacity-80 mt-2 font-bold text-yellow-400">إشراف: نورة المالكي - مشاعل الشريف</p>
                     </header>
 
-                    <main className="container mx-auto p-4 md:p-8">
-                        {/* قسم رفع الملفات */}
-                        {activeTab === 'upload' && (
-                            <div className="bg-white p-6 rounded-2xl shadow-lg max-w-3xl mx-auto border-t-8 border-blue-600">
-                                <h2 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">إضافة مورد تعليمي جديد</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    <div>
-                                        <label className="block font-bold mb-2">اسم المعلمة</label>
-                                        <select className="w-full p-3 border rounded-xl" onChange={(e) => setSelectedTeacher(e.target.value)}>
-                                            <option>نورة المالكي</option>
-                                            <option>مشاعل الشريف</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block font-bold mb-2">نوع المورد</label>
-                                        <select className="w-full p-3 border rounded-xl" onChange={(e) => setResourceType(e.target.value)}>
-                                            <option>استراتيجية تدريسية</option>
-                                            <option>أوراق عمل</option>
-                                            <option>عرض تقديمي</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="border-4 border-dashed border-gray-200 p-12 rounded-3xl text-center hover:border-blue-400 transition-all cursor-pointer">
-                                    <p className="text-xl text-gray-400">اسحبي الملف هنا (PDF, PPT, DOC)</p>
-                                    <p className="text-sm text-blue-500 mt-2">المعلمة الحالية: {selectedTeacher}</p>
-                                </div>
-                                <button className="w-full mt-6 bg-blue-700 text-white py-4 rounded-2xl font-bold text-xl shadow-lg">نشر المورد على مستوى المنطقة</button>
+                    <div className="w-full max-w-xl bg-white p-8 rounded-3xl shadow-xl border-t-8 border-blue-600">
+                        
+                        {/* الخطوة 1: كتابة الاسم */}
+                        {step === 1 && (
+                            <div className="text-center">
+                                <h2 className="text-xl font-bold mb-6 text-blue-900">مرحباً بكِ، يرجى كتابة اسمكِ</h2>
+                                <input 
+                                    type="text" 
+                                    className="w-full p-4 border-2 border-blue-100 rounded-2xl text-center text-lg focus:border-blue-500 outline-none"
+                                    placeholder="اكتبي اسم المعلمة هنا..."
+                                    value={formData.teacherName}
+                                    onChange={(e) => setFormData({...formData, teacherName: e.target.value})}
+                                />
+                                <button 
+                                    disabled={!formData.teacherName}
+                                    onClick={nextStep}
+                                    className="mt-6 bg-blue-600 text-white px-10 py-3 rounded-2xl font-bold disabled:opacity-50"
+                                >
+                                    التالي
+                                </button>
                             </div>
                         )}
 
-                        {/* جدول الموارد المرفوعة */}
-                        {activeTab === 'browse' && (
-                            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                                <div className="p-6 bg-gray-50 border-b flex justify-between items-center">
-                                    <h2 className="text-xl font-bold text-blue-900 font-bold">الموارد التعليمية المنشورة</h2>
-                                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">نظام نشط ✅</span>
+                        {/* الخطوة 2: اختيار الاستراتيجية */}
+                        {step === 2 && (
+                            <div className="text-center">
+                                <h2 className="text-xl font-bold mb-6 text-blue-900 text-right">أهلاً يا {formData.teacherName}، اختاري الاستراتيجية:</h2>
+                                <div className="grid grid-cols-2 gap-4 mb-6">
+                                    {['التعلم النشط', 'الخرائط الذهنية', 'فكر-شارك', 'الكرسي الساخن'].map(item => (
+                                        <div 
+                                            key={item}
+                                            onClick={() => { setFormData({...formData, strategy: item}); nextStep(); }}
+                                            className="icon-btn p-4 border-2 border-blue-50 rounded-2xl bg-blue-50 text-blue-800 font-bold hover:bg-blue-600 hover:text-white"
+                                        >
+                                            💡 {item}
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-right border-collapse">
-                                        <thead>
-                                            <tr className="bg-blue-50 text-blue-900">
-                                                <th className="p-4 border-b">اسم المعلمة</th>
-                                                <th className="p-4 border-b">اسم الملف</th>
-                                                <th className="p-4 border-b">نوع المورد</th>
-                                                <th className="p-4 border-b">المادة</th>
-                                                <th className="p-4 border-b">عدد الزيارات</th>
-                                                <th className="p-4 border-b">الإجراء</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {resources.map(res => (
-                                                <tr key={res.id} className="hover:bg-gray-50 transition">
-                                                    <td className="p-4 border-b font-bold text-gray-700">{res.teacher}</td>
-                                                    <td className="p-4 border-b text-blue-600">{res.fileName}</td>
-                                                    <td className="p-4 border-b">
-                                                        <span className={`px-3 py-1 rounded-full text-xs ${res.type === 'أوراق عمل' ? 'bg-orange-100 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
-                                                            {res.type}
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4 border-b">{res.subject}</td>
-                                                    <td className="p-4 border-b font-bold text-red-500">{res.visits} زيارة</td>
-                                                    <td className="p-4 border-b">
-                                                        <button className="bg-blue-100 text-blue-700 px-4 py-1 rounded-lg text-sm hover:bg-blue-700 hover:text-white transition">عرض</button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <button onClick={() => setStep(1)} className="text-gray-400 text-sm underline">رجوع</button>
                             </div>
                         )}
-                    </main>
 
-                    <footer className="mt-12 p-8 bg-gray-800 text-white text-center">
-                        <p className="font-bold text-lg mb-2 text-yellow-400">منصة مجمع السحن الماك التعليمية</p>
-                        <p className="opacity-70">تم التطوير لخدمة معلمات المنطقة تحت إشراف نورة المالكي ومشاعل الشريف</p>
+                        {/* الخطوة 3: اختيار أوراق العمل */}
+                        {step === 3 && (
+                            <div className="text-center">
+                                <h2 className="text-xl font-bold mb-6 text-blue-900 text-right">المرحلة الأخيرة: أوراق العمل</h2>
+                                <div className="grid grid-cols-1 gap-4 mb-6 text-right">
+                                    <label className="font-bold">ارفق ملف ورقة العمل:</label>
+                                    <div 
+                                        className="icon-btn border-4 border-dashed border-green-100 p-8 rounded-2xl bg-green-50 text-green-700"
+                                        onClick={() => document.getElementById('fileIn').click()}
+                                    >
+                                        <input 
+                                            id="fileIn" 
+                                            type="file" 
+                                            className="hidden" 
+                                            onChange={(e) => setFormData({...formData, workSheet: e.target.files[0].name})} 
+                                        />
+                                        <p className="text-3xl mb-2">📄</p>
+                                        <p className="font-bold">{formData.workSheet || "اضغطي لاختيار ملف ورقة العمل"}</p>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={handleSave}
+                                    className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold text-xl shadow-lg hover:bg-green-700 transition"
+                                >
+                                    حفظ المورد التعليمي
+                                </button>
+                                <button onClick={() => setStep(2)} className="mt-4 text-gray-400 text-sm underline block mx-auto">رجوع</button>
+                            </div>
+                        )}
+
+                        {/* شريط التقدم */}
+                        <div className="flex justify-center gap-2 mt-10">
+                            <div className={`h-2 w-10 rounded-full ${step >= 1 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+                            <div className={`h-2 w-10 rounded-full ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+                            <div className={`h-2 w-10 rounded-full ${step >= 3 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
+                        </div>
+                    </div>
+
+                    <footer className="mt-10 text-gray-500 text-sm text-center">
+                        <p>منصة منطقة مجمع السحن - نظام المعلمات الذكي</p>
+                        <p className="mt-1">إشراف نورة المالكي & مشاعل الشريف</p>
                     </footer>
                 </div>
             );
